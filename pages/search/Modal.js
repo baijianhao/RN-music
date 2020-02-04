@@ -26,11 +26,16 @@ export default class Search extends Component {
       showSmartBox: true,
       pageType: '',
     }
+    this.setPageState = this._setPageState.bind(this)
   }
 
   onChangeText(text) {
     this.setState({ searchText: text })
     this._fetch(text)
+  }
+
+  _setPageState(pageType) {
+    this.setState({ pageType })
   }
 
   _fetch(text) {
@@ -77,7 +82,7 @@ export default class Search extends Component {
         keyExtractor={(item) => item.id}
         renderItem={({ item, index, section, separators }) => (
           <TouchableWithoutFeedback
-            onPress={() => { this.setState({ showSmartBox: false, pageType: section.type }) }}
+            onPress={() => { this.setState({ searchText: item.name, showSmartBox: false }) }}
             onShowUnderlay={separators.highlight}
             onHideUnderlay={separators.unhighlight}>
             <View style={{ flexDirection: 'row', backgroundColor: 'white', height: 40, borderBottomWidth: 1, borderBottomColor: '#efefef', alignItems: 'center', padding: 10 }}>
@@ -94,7 +99,7 @@ export default class Search extends Component {
     if (this.state.showSmartBox) {
       return this._renderSmartBox()
     }
-    return <Pages />
+    return <Pages searchText={this.state.searchText} updatePageState={this.setPageState} />
   }
 
   render() {

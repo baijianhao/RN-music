@@ -7,6 +7,7 @@ import {
   TouchableHighlight,
   Dimensions,
   FlatList,
+  TouchableWithoutFeedback
 } from 'react-native';
 
 const CONSTANTS = {
@@ -20,19 +21,32 @@ export default class Pages extends Component {
     super(props)
     this.state = {
       pageType: '',
-      selectedPage: 'song'
+      selectedPage: 'song',
+      songs: [],
+      hasMore: true,
+      selected: 0
     }
     this.pageHeaders = [
-      { key: 'song', title: '单曲' },
-      { key: 'singer', title: '歌手' },
-      { key: 'album', title: '专辑' },
-      { key: 'mv', title: '视频' },
+      { key: 'song', title: '单曲', tab: 0 },
+      { key: 'singer', title: '歌手', tab: 9 },
+      { key: 'album', title: '专辑', tab: 8 },
+      { key: 'mv', title: '视频', tab: 12 },
+      { key: 'lyric', title: '歌词', tab: 7 }
     ]
+    this.pagenation = {
+      currentPage: 1,
+      pageCount: 10,
+      totalnum: 0
+    }
     this.viewableHeaders = [0, 1, 2]
     this.viewabilityConfig = {
       itemVisiblePercentThreshold: 100
     }
     this.onViewableItemsChanged = this._onViewableItemsChanged.bind(this)
+  }
+
+  componentDidMount() {
+    this._fetch()
   }
 
   _onViewableItemsChanged(item) {
@@ -84,6 +98,10 @@ export default class Pages extends Component {
     )
   }
 
+  componentDidUpdate() {
+    console.info('update')
+  }
+
   _pageSelected(e) {
     const { position } = e.nativeEvent
     if (!this.viewableHeaders.includes(position)) {
@@ -111,7 +129,29 @@ export default class Pages extends Component {
     this.setState({ selectedPage: CONSTANTS.PAGE_TYPE[position] })
   }
 
+  _fetch() {
+    if (!this.state.hasMore) {
+      return
+    }
+    const baseUrl = 'https://c.y.qq.com/soso/fcgi-bin/client_search_cp?aggr=1&new_json=1&cr=1&catZhida=1&lossless=0&flag_qc=0&format=json&inCharset=utf8&outCharset=utf-8&platform=yqq.json'
+    const searchUrl = `${baseUrl}t=${0}&&p=${this.pagenation.currentPage}&n=${this.pagenation.pageCount}&w=${this.props.searchText}`
+    fetch(searchUrl)
+      .then(response => response.json())
+      .then(responseJson => {
+        const { list } = responseJson.data.song
+        console.info(list)
+        if (list.length) {
+          this.setState((preState) => {
+            return { songs: preState.songs.concat(list) }
+          })
+        } else {
+          this.setState({ hasMore: false })
+        }
+      })
+  }
+
   render() {
+    // const {searchText, updatePageState} = this.props
     return (
       <View style={{ flex: 1, flexDirection: 'column' }}>
         {this._renderHeader()}
@@ -121,7 +161,30 @@ export default class Pages extends Component {
           initialPage={CONSTANTS.PAGE_TYPE.indexOf(this.state.selectedPage)}
           onPageSelected={(e) => { this._pageSelected(e) }}>
           <View>
-            <Text>sonnnng</Text>
+            <FlatList
+              data={this.state.songs}
+              keyExtractor={(item) => item.mid}
+              renderItem={({ item, index }) => (
+                <TouchableWithoutFeedback onPress={() => { this.setState({ selected: index }) }}>
+                  <View style={{ padding: 10, borderBottomColor: '#efefef', borderBottomWidth: 1 }}>
+                    {
+                      this.state.selected === index ? (
+                        <>
+                          <Text style={{ fontSize: 16, color: '#30c27c' }}>{item.title}</Text>
+                          <Text style={{ fontSize: 14, color: '#30c27c' }}>{item.singer[0].name + '·' + item.album.name}</Text>
+                        </>
+                      ) : (
+                          <>
+                            <Text style={{ fontSize: 16, color: '#222' }}>{item.title}</Text>
+                            <Text style={{ fontSize: 14, color: '#555' }}>{item.singer[0].name + '·' + item.album.name}</Text>
+                          </>
+                        )
+                    }
+
+                  </View>
+                </TouchableWithoutFeedback>
+              )}
+            />
           </View>
           <View>
             <Text>singer</Text>
