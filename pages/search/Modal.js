@@ -26,7 +26,7 @@ export default class Search extends Component {
       showSmartBox: true,
       pageType: '',
     }
-    this.setPageState = this._setPageState.bind(this)
+    // this.setPageState = this._setPageState.bind(this)
   }
 
   onChangeText(text) {
@@ -34,7 +34,7 @@ export default class Search extends Component {
     this._fetch(text)
   }
 
-  _setPageState(pageType) {
+  _setPageState = (pageType) => {
     this.setState({ pageType })
   }
 
@@ -99,7 +99,7 @@ export default class Search extends Component {
     if (this.state.showSmartBox) {
       return this._renderSmartBox()
     }
-    return <Pages searchText={this.state.searchText} updatePageState={this.setPageState} />
+    return <Pages searchText={this.state.searchText} updatePageState={this._setPageState} />
   }
 
   render() {
