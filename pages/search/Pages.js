@@ -10,6 +10,7 @@ import {
   TouchableWithoutFeedback
 } from 'react-native';
 import Songs from './Songs'
+import Singers from './Singers'
 
 const CONSTANTS = {
   PAGE_TYPE: ['song', 'singer', 'album', 'mv']
@@ -132,7 +133,7 @@ export default class Pages extends Component {
             <Songs searchText={this.props.searchText} />
           </View>
           <View>
-            <Text>singer</Text>
+            <Singers />
           </View>
           <View>
             <Text>album</Text>

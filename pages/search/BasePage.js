@@ -2,6 +2,13 @@ import React, { Component, PureComponent } from 'react'
 import { View, FlatList, TouchableWithoutFeedback, Text, ActivityIndicator } from 'react-native'
 
 export default class BasePage extends PureComponent {
+  constructor(props) {
+    super(props)
+    console.info('songs init')
+    this._formatItems()
+    this.state.items = []
+    this.listFooterComponent = this._listFooterComponent.bind(this)
+  }
 
   pagenation = {
     page: 1,
@@ -14,7 +21,8 @@ export default class BasePage extends PureComponent {
 
   state = {
     selected: -1,
-    items: []
+    items: [],
+    hasMore: true
   }
 
   _fetch(tab) {
@@ -22,7 +30,7 @@ export default class BasePage extends PureComponent {
     const searchUrl = `${baseUrl}t=${tab}&p=${this.pagenation.page++}&n=${this.pagenation.count}&w=${this.props.searchText}`
     console.info(searchUrl)
     return new Promise((resolve, reject) => {
-      if (!this.hasMore) {
+      if (!this.state.hasMore) {
         return resolve(null)
       }
       fetch(searchUrl)
@@ -35,8 +43,8 @@ export default class BasePage extends PureComponent {
   }
 
   _listFooterComponent() {
-    if (!this.hasMore) {
-      return null
+    if (!this.state.hasMore) {
+      return <Text>mei you la</Text>
     }
     return (
       <View style={{ height: 40, padding: 10, alignItems: 'center' }}>
@@ -51,10 +59,10 @@ export default class BasePage extends PureComponent {
         data={this.state.items}
         keyExtractor={(item) => this._keyExtractor(item)}
         renderItem={({ item, index }) => this._renderItem(item, index)}
-        ListFooterComponent={() => this._listFooterComponent()}
         onEndReached={({ distanceFromEnd }) => {
           if (distanceFromEnd > 0) {
-            // 数据初次渲染时，distanceFromEnd < 0
+            console.info('distanceFromEnd', distanceFromEnd)
+            // 数据初次渲染时，distanceFromEnd < 0 ?
             this._formatItems()
           }
         }}

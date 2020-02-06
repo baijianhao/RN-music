@@ -9,6 +9,7 @@ import {
   Modal,
   SectionList,
   Dimensions,
+  SafeAreaView
 } from 'react-native';
 import Pages from './Pages'
 
@@ -112,32 +113,35 @@ export default class Search extends Component {
           visibleHandler(false)
         }}
       >
-        <View style={styles.header}>
-          <TouchableWithoutFeedback
-            onPress={() => { visibleHandler(false) }}
-          >
-            <Icon name='md-arrow-back' size={28} color='#555' />
-          </TouchableWithoutFeedback>
-          <View style={styles.searchBar}>
-            <Icon name='md-search' size={18} color='#eee' style={{ marginLeft: 10, marginRight: 10 }} />
-            <TextInput
-              style={{ flex: 1, height: 30, padding: 0 }}
-              onChangeText={(text) => { this.onChangeText(text) }}
-              value={this.state.searchText}
-              autoFocus={true}
-              onFocus={() => { this.setState({ showSmartBox: true }) }}
-            />
+        <SafeAreaView style={{ flex: 1 }}>
+          <View style={styles.header}>
             <TouchableWithoutFeedback
-              onPress={() => { this.state.searchText && this.setState({ searchText: '' }) }}
+              onPress={() => { visibleHandler(false) }}
             >
-              <Icon name='md-close' size={18} color={this.state.searchText ? '#eee' : 'transparent'} style={{ marginLeft: 10, marginRight: 10 }} />
+              <Icon name='md-arrow-back' size={28} color='#555' />
             </TouchableWithoutFeedback>
+            <View style={styles.searchBar}>
+              <Icon name='md-search' size={18} color='#eee' style={{ marginLeft: 10, marginRight: 10 }} />
+              <TextInput
+                style={{ flex: 1, height: 30, padding: 0 }}
+                onChangeText={(text) => { this.onChangeText(text) }}
+                value={this.state.searchText}
+                autoFocus={true}
+                onFocus={() => { this.setState({ showSmartBox: true }) }}
+              />
+              <TouchableWithoutFeedback
+                onPress={() => { this.state.searchText && this.setState({ searchText: '' }) }}
+              >
+                <Icon name='md-close' size={18} color={this.state.searchText ? '#eee' : 'transparent'} style={{ marginLeft: 10, marginRight: 10 }} />
+              </TouchableWithoutFeedback>
+            </View>
           </View>
-        </View>
-        {
-          this._renderContent()
-        }
+          {
+            this._renderContent()
+          }
+        </SafeAreaView>
       </Modal>
+
     )
   }
 }

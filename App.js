@@ -1,12 +1,5 @@
 import React, { Component } from 'react';
-import {
-  SafeAreaView,
-  StyleSheet,
-  ScrollView,
-  View,
-  Text,
-  StatusBar,
-} from 'react-native';
+import { SafeAreaView } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { createAppContainer, createSwitchNavigator } from 'react-navigation';
 import MainRoutes from './pages/main/routes';
@@ -21,7 +14,6 @@ const AppRoutes = createSwitchNavigator(
     initialRouteName: 'Login',
     navigationOptions: ({ navigation }) => ({
       tabBarIcon: ({ focused, horizontal, tintColor }) => {
-        // return <Icon name="facebook" size={30} color="#900" />
         const { routeName } = navigation.state;
         let IconComponent = Icon;
         let iconName;
@@ -36,33 +28,12 @@ const AppRoutes = createSwitchNavigator(
   }
 )
 
-// class App extends Component {
-//   render() {
-//     return (
-//       <View style={styles.bodyView}>
-//         <Icon.Button
-//           name="music"
-//           backgroundColor="#fff"
-//           color="#62b900"
-//           iconStyle={{
-//             marginRight: 20
-//           }}
-//           style={{ borderWidth: 1, borderColor: '#efefef' }}
-//         >
-//           <Text>Login with Wechat</Text>
-//         </Icon.Button>
-//       </View>
-//     )
-//   }
-// }
+const AppWithNavigationState = createAppContainer(AppRoutes)
 
-// const styles = StyleSheet.create({
-//   bodyView: {
-//     flex: 1,
-//     flexDirection: 'row',
-//     justifyContent: 'center',
-//     alignItems: 'center',
-//   }
-// })
+const AppContainer = () => (
+  <SafeAreaView style={{ flex: 1 }}>
+    <AppWithNavigationState />
+  </SafeAreaView>
+);
+export default AppContainer
 
-export default createAppContainer(AppRoutes);
