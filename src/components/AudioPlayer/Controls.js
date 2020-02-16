@@ -1,8 +1,9 @@
-import React, { useState } from 'react'
+import React, { useState, useReducer } from 'react'
 import { View, Text, StyleSheet, Dimensions, TouchableWithoutFeedback } from 'react-native'
 import Video from 'react-native-video';
 import Slider from '@react-native-community/slider';
 import Icon from 'react-native-vector-icons/FontAwesome';
+import reducer, { defaultState } from '../../store/AudioPlayer'
 
 function _getMinutesFromSeconds(duration) {
   const minutes = duration >= 60 ? Math.floor(duration / 60) : 0;
@@ -19,66 +20,90 @@ export default function Controls(props) {
   // TODO:
   // sourceList
   // type: 单曲，循环
-  const [currentTime, setCurrentTime] = useState(0)
-  const [playing, setPlaying] = useState(false)
-  const [duration, setDuration] = useState(0)
-  const [isSliding, setSliding] = useState(false)
-  const [isEnding, setEnding] = useState(false)
-  const { poster: uri, source } = props
+  const [state, dispatch] = useReducer(reducer, defaultState)
   let player = null
   function _audioOnload(e) {
-    setPlaying(true)
-    setDuration(e.duration)
+    dispatch({
+      type: 'onloaded',
+      state: {
+        playing: true,
+        duration: e.duration
+      }
+    })
   }
   function _audioOnProgress(e) {
-    if (isSliding) {
+    if (state.isSliding) {
       return
     }
-    setCurrentTime(e.currentTime)
+    dispatch({
+      type: 'updateCurrentTime',
+      state: {
+        currentTime: e.currentTime
+      }
+    })
   }
   function _playHandler() {
-    if (isEnding) {
+    if (state.isEnding) {
       player.seek(0)
-      setEnding(false)
-      setPlaying(true)
+      dispatch({
+        type: 'repeat',
+        state: {
+          isEnding: false,
+          playing: true,
+        }
+      })
       return
     }
-    setPlaying(!playing)
+    dispatch({
+      type: 'change_playing_status',
+    })
   }
   function _onSlidingComplete(currentTime) {
-    setSliding(false)
+    dispatch({
+      type: 'change_sliding_status',
+    })
     player && player.seek(currentTime)
   }
   function _onValueChange(currentTime) {
-    setCurrentTime(currentTime)
+    dispatch({
+      state: {
+        currentTime: currentTime
+      }
+    })
   }
   function _onSlidingStart() {
-    setSliding(true)
+    dispatch({
+      type: 'change_sliding_status',
+    })
   }
   function _onEnd() {
-    setCurrentTime(0)
-    setPlaying(false)
-    setEnding(true)
+    dispatch({
+      state: {
+        currentTime: 0,
+        playing: false,
+        isEnding: true
+      }
+    })
   }
   return (
     <View style={{ flex: 1 }}>
       <Video
         style={styles.video}
-        source={{ uri: source }}
+        source={{ uri: state.source }}
         ref={(ref) => {
           player = ref
         }}
         onLoad={(e) => { _audioOnload(e) }}
         onProgress={(e) => { _audioOnProgress(e) }}
-        paused={!playing}
+        paused={!state.playing}
         onEnd={() => _onEnd()}
       />
       <View style={styles.controlWrapper}>
         <Slider
-          value={currentTime}
+          value={state.currentTime}
           minimumValue={0}
           step={1}
-          maximumValue={duration}
+          maximumValue={state.duration}
           minimumTrackTintColor={'#fff'}
           onSlidingComplete={(val) => _onSlidingComplete(val)}
           onValueChange={(v) => _onValueChange(v)}
@@ -86,10 +111,10 @@ export default function Controls(props) {
         />
         <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
           <Text style={styles.durationText}>
-            {_getMinutesFromSeconds(currentTime)}
+            {_getMinutesFromSeconds(state.currentTime)}
           </Text>
           <Text style={styles.durationText}>
-            {_getMinutesFromSeconds(duration)}
+            {_getMinutesFromSeconds(state.duration)}
           </Text>
         </View>
 
@@ -98,7 +123,7 @@ export default function Controls(props) {
           <TouchableWithoutFeedback onPress={() => _playHandler()}>
             <View style={{ paddingLeft: 28, paddingRight: 28 }}>
               {
-                playing ? (<Icon name="pause-circle" size={60} color={'#fff'} />) :
+                state.playing ? (<Icon name="pause-circle" size={60} color={'#fff'} />) :
                   (<Icon name="play-circle" size={60} color={'#fff'} />)
               }
             </View>

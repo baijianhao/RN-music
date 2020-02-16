@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useReducer } from 'react';
 import Icon from 'react-native-vector-icons/Ionicons';
 import {
   StyleSheet,
@@ -11,10 +11,12 @@ import {
   Image
 } from 'react-native';
 import Controls from './Controls'
+import reducer, { defaultState } from '../../store/AudioPlayer'
 
 const { width: screenWidth } = Dimensions.get('window')
 export default function BasePlayer(props) {
   const { visibleHandler, poster: image } = props
+  const [state, dispatch] = useReducer(reducer, defaultState)
   return (
     <Modal
       animationType="slide"
@@ -25,7 +27,7 @@ export default function BasePlayer(props) {
       <SafeAreaView style={{ flex: 1 }}>
         <View style={{ flex: 1 }}>
           <ImageBackground style={styles.background}
-            source={{ uri: image }}
+            source={{ uri: state.poster }}
             blurRadius={60}
           />
           <View style={styles.header}>
@@ -37,12 +39,12 @@ export default function BasePlayer(props) {
           </View>
           <View style={styles.poster}>
             <Image
-              source={{ uri: image }}
+              source={{ uri: state.poster }}
               style={{ width: 300, height: 300 }}
               resizeMode={'cover'}
             />
           </View>
-          <Controls {...props} />
+          <Controls />
         </View>
       </SafeAreaView>
     </Modal>
