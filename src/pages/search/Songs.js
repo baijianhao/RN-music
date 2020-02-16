@@ -3,13 +3,6 @@ import { View, FlatList, TouchableWithoutFeedback, Text, StyleSheet } from 'reac
 import BasePage from './BasePage'
 
 export default class Songs extends BasePage {
-  // constructor(props) {
-  //   super(props)
-  //   console.info('songs init')
-  //   this._formatItems()
-  //   this.state.items = []
-  // }
-
   componentDidMount() {
     const { searchText } = this.props
   }

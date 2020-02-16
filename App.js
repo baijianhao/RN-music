@@ -1,9 +1,9 @@
 import React, { Component } from 'react';
-import { SafeAreaView } from 'react-native';
+import { View, SafeAreaView } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { createAppContainer, createSwitchNavigator } from 'react-navigation';
-import MainRoutes from './pages/main/routes';
-import Login from './pages/Login';
+import MainRoutes from './src/pages/main/routes';
+import Login from './src/pages/Login';
 
 const AppRoutes = createSwitchNavigator(
   {
@@ -32,7 +32,10 @@ const AppWithNavigationState = createAppContainer(AppRoutes)
 
 const AppContainer = () => (
   <SafeAreaView style={{ flex: 1 }}>
-    <AppWithNavigationState />
+    <AppWithNavigationState >
+
+      <View style={{ height: 40, backgroundColor: 'black', position: "absolute", bottom: 0, left: 0, right: 0 }}></View>
+    </AppWithNavigationState>
   </SafeAreaView>
 );
 export default AppContainer
