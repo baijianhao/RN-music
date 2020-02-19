@@ -1,9 +1,48 @@
-import React, { useState, useReducer } from 'react'
+import React from 'react'
 import { View, Text, StyleSheet, Dimensions, TouchableWithoutFeedback } from 'react-native'
-import Video from 'react-native-video';
 import Slider from '@react-native-community/slider';
 import Icon from 'react-native-vector-icons/FontAwesome';
-import reducer, { defaultState } from '../../store/AudioPlayer'
+import { connect } from 'react-redux';
+
+const mapStateToProps = (state) => {
+  return { state }
+}
+const mapDispatchToProps = (dispatch) => {
+  return {
+    changePlayingStatus() {
+      dispatch({
+        type: 'change_playing_status',
+      })
+    },
+    replay() {
+      dispatch({
+        type: 'repeat',
+        state: {
+          isEnding: false,
+          playing: true,
+        }
+      })
+    },
+    _onSlidingComplete(currentTime) {
+      dispatch({
+        type: 'change_sliding_status',
+      })
+    },
+    _onValueChange(currentTime) {
+      dispatch({
+        type: 'sliderValueChnage',
+        state: {
+          currentTime: currentTime
+        }
+      })
+    },
+    _onSlidingStart() {
+      dispatch({
+        type: 'change_sliding_status',
+      })
+    },
+  }
+}
 
 function _getMinutesFromSeconds(duration) {
   const minutes = duration >= 60 ? Math.floor(duration / 60) : 0;
@@ -16,88 +55,26 @@ function _getMinutesFromSeconds(duration) {
 
 const { width: screenWidth } = Dimensions.get('window')
 
-export default function Controls(props) {
+function Controls(props) {
+  // console.info('controls', props.state)
   // TODO:
   // sourceList
   // type: 单曲，循环
-  const [state, dispatch] = useReducer(reducer, defaultState)
-  let player = null
-  function _audioOnload(e) {
-    dispatch({
-      type: 'onloaded',
-      state: {
-        playing: true,
-        duration: e.duration
-      }
-    })
-  }
-  function _audioOnProgress(e) {
-    if (state.isSliding) {
-      return
-    }
-    dispatch({
-      type: 'updateCurrentTime',
-      state: {
-        currentTime: e.currentTime
-      }
-    })
-  }
+  const state = props.state
   function _playHandler() {
     if (state.isEnding) {
-      player.seek(0)
-      dispatch({
-        type: 'repeat',
-        state: {
-          isEnding: false,
-          playing: true,
-        }
-      })
+      state.player.seek(0)
+      props.replay()
       return
     }
-    dispatch({
-      type: 'change_playing_status',
-    })
+    props.changePlayingStatus()
   }
   function _onSlidingComplete(currentTime) {
-    dispatch({
-      type: 'change_sliding_status',
-    })
-    player && player.seek(currentTime)
-  }
-  function _onValueChange(currentTime) {
-    dispatch({
-      state: {
-        currentTime: currentTime
-      }
-    })
-  }
-  function _onSlidingStart() {
-    dispatch({
-      type: 'change_sliding_status',
-    })
-  }
-  function _onEnd() {
-    dispatch({
-      state: {
-        currentTime: 0,
-        playing: false,
-        isEnding: true
-      }
-    })
+    props._onSlidingComplete()
+    state.player && state.player.seek(currentTime)
   }
   return (
     <View style={{ flex: 1 }}>
-      <Video
-        style={styles.video}
-        source={{ uri: state.source }}
-        ref={(ref) => {
-          player = ref
-        }}
-        onLoad={(e) => { _audioOnload(e) }}
-        onProgress={(e) => { _audioOnProgress(e) }}
-        paused={!state.playing}
-        onEnd={() => _onEnd()}
-      />
       <View style={styles.controlWrapper}>
         <Slider
           value={state.currentTime}
@@ -106,8 +83,8 @@ export default function Controls(props) {
           maximumValue={state.duration}
           minimumTrackTintColor={'#fff'}
           onSlidingComplete={(val) => _onSlidingComplete(val)}
-          onValueChange={(v) => _onValueChange(v)}
-          onSlidingStart={() => _onSlidingStart()}
+          onValueChange={(v) => props._onValueChange(v)}
+          onSlidingStart={() => props._onSlidingStart()}
         />
         <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
           <Text style={styles.durationText}>
@@ -136,10 +113,6 @@ export default function Controls(props) {
 }
 
 const styles = StyleSheet.create({
-  video: {
-    width: Dimensions.get('window').width,
-    height: 100,
-  },
   durationText: {
     color: '#fff',
     opacity: 0.5
@@ -152,3 +125,5 @@ const styles = StyleSheet.create({
     padding: 16,
   }
 });
+
+export default connect(mapStateToProps, mapDispatchToProps)(Controls);

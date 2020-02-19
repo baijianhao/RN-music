@@ -12,6 +12,7 @@ import {
   SafeAreaView
 } from 'react-native';
 import Pages from './Pages'
+import Player from '../../components/AudioPlayer/PlayerWrapper'
 
 const CONSTANTS = {
   PAGE_TYPE: ['song', 'singer', 'album', 'mv']
@@ -139,6 +140,7 @@ export default class Search extends Component {
           {
             this._renderContent()
           }
+          <Player />
         </SafeAreaView>
       </Modal>
 

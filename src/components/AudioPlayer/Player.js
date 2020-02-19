@@ -1,75 +1,79 @@
-import React, { useReducer } from 'react';
-import Icon from 'react-native-vector-icons/Ionicons';
-import {
-  StyleSheet,
-  View,
-  TouchableWithoutFeedback,
-  Modal,
-  Dimensions,
-  SafeAreaView,
-  ImageBackground,
-  Image
-} from 'react-native';
-import Controls from './Controls'
-import reducer, { defaultState } from '../../store/AudioPlayer'
+import React from 'react';
+import Video from 'react-native-video';
+import { connect } from 'react-redux';
 
-const { width: screenWidth } = Dimensions.get('window')
-export default function BasePlayer(props) {
-  const { visibleHandler, poster: image } = props
-  const [state, dispatch] = useReducer(reducer, defaultState)
+const mapStateToProps = (state) => {
+  return { state }
+}
+const mapDispatchToProps = (dispatch) => {
+  return {
+    initPlayer(player) {
+      dispatch({
+        type: 'init_player',
+        state: {
+          player
+        }
+      })
+    },
+    _audioOnload(e, player) {
+      console.info(e)
+      dispatch({
+        type: 'onloaded',
+        state: {
+          playing: true,
+          duration: e.duration,
+          player,
+        }
+      })
+    },
+    _audioOnProgress(currentTime) {
+      dispatch({
+        type: 'updateCurrentTime',
+        state: {
+          currentTime
+        }
+      })
+    },
+    changePlayingStatus() {
+      dispatch({
+        type: 'change_playing_status',
+      })
+    },
+    _onEnd() {
+      dispatch({
+        type: 'onEnd',
+        state: {
+          currentTime: 0,
+          playing: false,
+          isEnding: true
+        }
+      })
+    }
+  }
+}
+let player = null
+
+const BasePlayer = (props) => {
+  const state = props.state
+
+  function _audioOnProgress(e) {
+    if (state.isSliding) {
+      return
+    }
+    props._audioOnProgress(e.currentTime)
+  }
   return (
-    <Modal
-      animationType="slide"
-      onRequestClose={() => {
-        visibleHandler(false)
+    state.source ? <Video
+      source={{ uri: state.source }}
+      ref={(ref) => {
+        player = ref
       }}
-    >
-      <SafeAreaView style={{ flex: 1 }}>
-        <View style={{ flex: 1 }}>
-          <ImageBackground style={styles.background}
-            source={{ uri: state.poster }}
-            blurRadius={60}
-          />
-          <View style={styles.header}>
-            <TouchableWithoutFeedback
-              onPress={() => { visibleHandler(false) }}
-            >
-              <Icon name='md-arrow-back' size={28} color='#fff' />
-            </TouchableWithoutFeedback>
-          </View>
-          <View style={styles.poster}>
-            <Image
-              source={{ uri: state.poster }}
-              style={{ width: 300, height: 300 }}
-              resizeMode={'cover'}
-            />
-          </View>
-          <Controls />
-        </View>
-      </SafeAreaView>
-    </Modal>
+      onLoad={(e) => { props._audioOnload(e, player) }}
+      onProgress={(e) => { _audioOnProgress(e) }}
+      paused={!state.playing}
+      onEnd={() => props._onEnd()}
+    /> : null
   )
 }
 
-const styles = StyleSheet.create({
-  header: {
-    width: screenWidth,
-    flexDirection: 'row',
-    height: 60,
-    alignItems: 'center',
-    padding: 10
-  },
-  poster: {
-    width: screenWidth,
-    height: 400,
-    alignItems: 'center',
-    justifyContent: 'center'
-  },
-  background: {
-    position: 'absolute',
-    top: 0,
-    bottom: 0,
-    left: 0,
-    right: 0,
-  },
-})
+export default connect(mapStateToProps, mapDispatchToProps)(BasePlayer);

@@ -11,7 +11,7 @@ import {
 } from 'react-native';
 import Songs from './Songs'
 import Singers from './Singers'
-import AudioPlayer from '../../components/AudioPlayer/Player'
+import AudioPlayer from '../../components/AudioPlayer/PlayerWrapper'
 
 const CONSTANTS = {
   PAGE_TYPE: ['song', 'singer', 'album', 'mv']
