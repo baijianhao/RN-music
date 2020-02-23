@@ -44,6 +44,7 @@ class Songs extends BasePage {
           type: 'change_song',
           state: {
             songId: item.mid,
+            songName: item.title,
             source: `${sips[0]}${midurlinfo.purl}`,
             poster: `https://y.gtimg.cn/music/photo_new/T002R800x800M000${item.album.mid}.jpg`
           }

@@ -32,9 +32,43 @@ const BasePlayer = (props) => {
   const state = props.state
 
   return (
-    <View style={{ height: 100, backgroundColor: 'red', width: screenWidth }}>
+    <View style={{ height: 60, borderColor: '#eee', borderWidth: 2, backgroundColor: '#fff', width: screenWidth }}>
       <TouchableWithoutFeedback onPress={() => state.source && props.dispatch({ type: 'change_full_screen_status' })}>
-        <View style={{ flex: 1 }}>
+        <View style={{ flex: 1, padding: 10, flexDirection: 'row', justifyContent: 'space-between' }}>
+          {
+            state.source ? (
+              <>
+                <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                  <Image
+                    source={{ uri: state.poster }}
+                    style={{ width: 66, height: 66, borderRadius: 33 }}
+                    resizeMode={'cover'}
+                  />
+                  <Text style={{ color: '#30c27c', paddingLeft: 10 }} >{state.songName}</Text>
+                </View>
+                <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                  <TouchableWithoutFeedback onPress={(e) => { e.stopPropagation() }}>
+                    <Icon name="md-play-circle" size={30} color={'#30c27c'} />
+                  </TouchableWithoutFeedback>
+                  <Icon name="md-list" size={34} color="#30c27c" style={{ paddingLeft: 10 }} />
+                </View>
+              </>
+            ) : (
+                <>
+                  <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                    <Icon name="md-disc" size={66} color="#ddd" style={{ marginTop: -24 }} />
+                    <Text style={{ color: '#d5d5d5', paddingLeft: 10 }} >{'让生活充满音乐'}</Text>
+                  </View>
+                  <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                    <TouchableWithoutFeedback onPress={(e) => { e.stopPropagation() }}>
+                      <Icon name="md-play-circle" size={30} color={'#ddd'} />
+                    </TouchableWithoutFeedback>
+                    <Icon name="md-list" size={34} color="#ddd" style={{ paddingLeft: 10 }} />
+                  </View>
+                </>
+              )
+          }
+
           <Modal
             animationType="slide"
             visible={state.isFullScreen}

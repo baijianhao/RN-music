@@ -10,7 +10,8 @@ export const defaultState = {
   isSliding: false,
   isEnding: false,
   isFullScreen: false,
-  lyric: ''
+  lyric: '',
+  songName: ''
 }
 export default reducer = (state = defaultState, action) => {
   let newState = {}

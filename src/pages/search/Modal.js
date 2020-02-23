@@ -30,6 +30,7 @@ export default class Search extends Component {
     }
   }
 
+  input = null
   onChangeText(text) {
     this.setState({ searchText: text })
     this._fetch(text)
@@ -123,6 +124,7 @@ export default class Search extends Component {
             <View style={styles.searchBar}>
               <Icon name='md-search' size={18} color='#eee' style={{ marginLeft: 10, marginRight: 10 }} />
               <TextInput
+                ref={(input) => this.input = input}
                 style={{ flex: 1, height: 30, padding: 0 }}
                 onChangeText={(text) => { this.onChangeText(text) }}
                 value={this.state.searchText}
@@ -130,7 +132,7 @@ export default class Search extends Component {
                 onFocus={() => { this.setState({ showSmartBox: true }) }}
               />
               <TouchableWithoutFeedback
-                onPress={() => { this.state.searchText && this.setState({ searchText: '' }) }}
+                onPress={() => { this.setState({ searchText: '', smartBox: [], showSmartBox: true }); this.input.focus() }}
               >
                 <Icon name='md-close' size={18} color={this.state.searchText ? '#eee' : 'transparent'} style={{ marginLeft: 10, marginRight: 10 }} />
               </TouchableWithoutFeedback>
