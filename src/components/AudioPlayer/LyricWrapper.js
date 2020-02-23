@@ -1,4 +1,4 @@
-import React, { Component } from 'react'
+import React, { Component, PureComponent } from 'react'
 import {
   StyleSheet,
   View,
@@ -8,7 +8,7 @@ import {
   FlatList
 } from 'react-native';
 import { connect } from 'react-redux';
-import { Buffer } from 'buffer'
+import { Buffer } from 'buffer';
 
 const getLyricTime = (timeStr) => {
   const reg = /(\d+):(\d+)\.(\d+)/
@@ -16,7 +16,7 @@ const getLyricTime = (timeStr) => {
   return 60 * min + Number(seconds) + millseconds / 100
 }
 
-class LyricWrapper extends Component {
+class LyricWrapper extends PureComponent {
   constructor(props) {
     super(props)
   }
@@ -70,7 +70,6 @@ class LyricWrapper extends Component {
   }
 
   componentDidUpdate() {
-    // console.info('rerender', !!this._wrapper)
     !this._isDraging && this._wrapper && this._wrapper.scrollToItem({
       item: this._line,
       viewPosition: 0.5

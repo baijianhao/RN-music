@@ -9,10 +9,10 @@ import {
   Modal,
   SectionList,
   Dimensions,
-  SafeAreaView
 } from 'react-native';
 import Pages from './Pages'
 import Player from '../../components/AudioPlayer/PlayerWrapper'
+import SafeAreaView from 'react-native-safe-area-view';
 
 const CONSTANTS = {
   PAGE_TYPE: ['song', 'singer', 'album', 'mv']
@@ -28,7 +28,6 @@ export default class Search extends Component {
       showSmartBox: true,
       pageType: '',
     }
-    // this.setPageState = this._setPageState.bind(this)
   }
 
   onChangeText(text) {

@@ -2,8 +2,9 @@ import React, { Component } from 'react'
 import { View, FlatList, TouchableWithoutFeedback, Text, StyleSheet } from 'react-native'
 import BasePage from './BasePage'
 import store from '../../store'
+import { connect } from 'react-redux';
 
-export default class Songs extends BasePage {
+class Songs extends BasePage {
   componentDidMount() {
     const { searchText } = this.props
   }
@@ -25,14 +26,22 @@ export default class Songs extends BasePage {
   _keyExtractor = (item) => item.mid
 
   _onSelectedItem = (item, index) => {
-    this.setState({ selected: index })
+    if (item.mid === this.props.songId) {
+      this.props.dispatch({
+        type: 'play_continue',
+        state: {
+          playing: true
+        }
+      })
+      return;
+    }
     const url = `https://u.y.qq.com/cgi-bin/musicu.fcg?format=json&inCharset=utf8&outCharset=utf-8&data={"req":{"module":"CDN.SrfCdnDispatchServer","method":"GetCdnDispatch","param":{"guid":"3359952310","calltype":0}},"req_0":{"module":"vkey.GetVkeyServer","method":"CgiGetVkey","param":{"guid":"3359952310","songmid":["${item.mid}"],"songtype":[0],"uin":"0","platform":"20"}},"comm":{"uin":"0","format":"json","ct":24,"cv":0}}`
     fetch(url).then((response) => response.json())
       .then((rspJson) => {
         const sips = rspJson.req.data.sip
         const midurlinfo = rspJson.req_0.data.midurlinfo[0]
-        store.dispatch({
-          type: 'init_player',
+        this.props.dispatch({
+          type: 'change_song',
           state: {
             songId: item.mid,
             source: `${sips[0]}${midurlinfo.purl}`,
@@ -40,10 +49,11 @@ export default class Songs extends BasePage {
           }
         })
       })
+      .catch((err) => console.error(err))
   }
 
   _renderItem(item, index) {
-    const itemSelected = index === this.state.selected
+    const itemSelected = item.mid === this.props.songId
     return (
       <TouchableWithoutFeedback onPress={() => { this._onSelectedItem(item, index) }}>
         <View style={[styles.item, itemSelected ? styles.highlightBorder : null]}>
@@ -70,3 +80,11 @@ const styles = StyleSheet.create({
     color: '#30c27c'
   }
 })
+
+const mapStateToProps = (state) => {
+  return {
+    songId: state.songId
+  }
+}
+
+export default connect(mapStateToProps)(Songs);

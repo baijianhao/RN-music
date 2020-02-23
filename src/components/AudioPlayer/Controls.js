@@ -29,12 +29,14 @@ const mapDispatchToProps = (dispatch) => {
       })
     },
     _onValueChange(currentTime) {
-      dispatch({
-        type: 'sliderValueChnage',
-        state: {
-          currentTime: currentTime
-        }
-      })
+      setTimeout(() => {
+        dispatch({
+          type: 'sliderValueChnage',
+          state: {
+            currentTime: currentTime
+          }
+        })
+      }, 100)
     },
     _onSlidingStart() {
       dispatch({
@@ -70,7 +72,7 @@ function Controls(props) {
     props.changePlayingStatus()
   }
   function _onSlidingComplete(currentTime) {
-    props._onSlidingComplete()
+    props._onSlidingComplete(currentTime)
     state.player && state.player.seek(currentTime)
   }
   return (

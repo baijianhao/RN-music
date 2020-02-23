@@ -15,7 +15,7 @@ export const defaultState = {
 export default reducer = (state = defaultState, action) => {
   let newState = {}
   switch (action.type) {
-    case 'init_player':
+    case 'change_song':
       newState = { ...defaultState, ...action.state }
       break;
     case 'change_playing_status':
@@ -29,6 +29,15 @@ export default reducer = (state = defaultState, action) => {
       break;
     case 'change_full_screen_status':
       newState = { ...state, isFullScreen: !state.isFullScreen }
+      break;
+    case 'updateCurrentTime':
+      if (state.isSliding) {
+        return state;
+      }
+      newState = { ...state, ...action.state }
+      break;
+    case 'sliderValueChnage':
+      newState = { ...state, ...action.state }
       break;
     default:
       newState = { ...state, ...action.state }

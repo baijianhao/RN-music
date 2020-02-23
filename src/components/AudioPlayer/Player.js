@@ -7,16 +7,7 @@ const mapStateToProps = (state) => {
 }
 const mapDispatchToProps = (dispatch) => {
   return {
-    initPlayer(player) {
-      dispatch({
-        type: 'init_player',
-        state: {
-          player
-        }
-      })
-    },
     _audioOnload(e, player) {
-      console.info(e)
       dispatch({
         type: 'onloaded',
         state: {

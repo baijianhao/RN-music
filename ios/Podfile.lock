@@ -184,7 +184,7 @@ PODS:
   - React-jsinspector (0.61.5)
   - react-native-blur (0.8.0):
     - React
-  - react-native-safe-area-context (0.6.4):
+  - react-native-safe-area-context (0.7.3):
     - React
   - react-native-slider (2.0.8):
     - React
@@ -375,7 +375,7 @@ SPEC CHECKSUMS:
   React-jsiexecutor: d5525f9ed5f782fdbacb64b9b01a43a9323d2386
   React-jsinspector: fa0ecc501688c3c4c34f28834a76302233e29dc0
   react-native-blur: cad4d93b364f91e7b7931b3fa935455487e5c33c
-  react-native-safe-area-context: 52342d2d80ea8faadd0ffa76d83b6051f20c5329
+  react-native-safe-area-context: e200d4433aba6b7e60b52da5f37af11f7a0b0392
   react-native-slider: 3a1cfd00c9c31068251b536822f7192e8d1d6b6f
   react-native-video: d01ed7ff1e38fa7dcc6c15c94cf505e661b7bfd0
   react-native-viewpager: a7b438ca32c57b2614ece2a123e7fe116f743131

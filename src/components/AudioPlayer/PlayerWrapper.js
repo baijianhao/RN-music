@@ -34,7 +34,7 @@ const BasePlayer = (props) => {
   return (
     <View style={{ height: 100, backgroundColor: 'red', width: screenWidth }}>
       <TouchableWithoutFeedback onPress={() => state.source && props.dispatch({ type: 'change_full_screen_status' })}>
-        <View style={{ flex: 1, backgroundColor: 'black' }}>
+        <View style={{ flex: 1 }}>
           <Modal
             animationType="slide"
             visible={state.isFullScreen}
